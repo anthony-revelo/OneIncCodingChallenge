@@ -2,6 +2,10 @@
 
 This project is a User Management API built using ASP.NET Core. It provides a RESTful API for managing users, including creating, reading, updating, and deleting users.
 
+> **Side Notes:**\
+> First of all, thanks for the opportunity. Second, I want to clarify that although this is a coding challenge, I really did want to implement other stuff, such as the CQRS pattern to separate the commands from the queries, but unfortunatelly, to keep everithing within the time limit, I restricted myself from applying other patterns and improvements to the code.\
+> Again, thanks for the opportunity!!
+
 ## Technologies Used
 
 - **ASP.NET Core 8**: Framework for building the API.
