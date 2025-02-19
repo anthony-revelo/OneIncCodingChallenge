@@ -56,6 +56,7 @@ Example `appsettings.json`:
 
 ## Running the Project
 To run the project, follow these steps:
+> If you don't have a database yet, you can use the Databaseinitializer console app to create it, just need to provide the connection string to the server, ensuring that you include the TrustServerCertificate=True; attribute if you are not using user and password
 - Restore NuGet Packages: Run dotnet restore to restore all the required packages.
 - Update Database Connection: Ensure the connection string in appsettings.json is correctly configured.
 - Run the Database Initializer: Ensure the database and tables are created by running the database initializer.
