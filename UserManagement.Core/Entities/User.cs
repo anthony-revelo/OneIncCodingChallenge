@@ -8,6 +8,7 @@ namespace UserManagement.Core.Entities
         public required string LastName { get; set; }
         public required string Email { get; set; }
         public required DateTime DateOfBirth { get; set; }
+        public int? Age { get; set; }
         public required string PhoneNumber { get; set; }
     }
 }

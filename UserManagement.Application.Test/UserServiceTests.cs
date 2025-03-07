@@ -17,7 +17,7 @@ namespace UserManagement.Application.Tests
         }
 
         [Fact]
-        public void GetAllUsers_ReturnsAllUsers()
+        public async void GetAllUsers_ReturnsAllUsers()
         {
             // Arrange
             var users = new List<User>
@@ -28,21 +28,22 @@ namespace UserManagement.Application.Tests
                     FirstName = "John",
                     LastName = "Doe",
                     Email = "johndoe@example.com",
+                    Age = 25,
                     DateOfBirth = new DateTime(2000, 1, 1),
                     PhoneNumber = "1234567890"
                 }
             };
-            _userRepositoryMock.Setup(repo => repo.GetAllUsers()).Returns(users);
+            _userRepositoryMock.Setup(repo => repo.GetAllUsersAsync()).ReturnsAsync(users);
 
             // Act
-            var result = _userService.GetAllUsers();
+            var result = await _userService.GetAllUsersAsync();
 
             // Assert
             Assert.Equal(users, result);
         }
 
         [Fact]
-        public void GetUserById_UserExists_ReturnsUser()
+        public async void GetUserById_UserExists_ReturnsUser()
         {
             // Arrange
             var user = new User
@@ -54,17 +55,17 @@ namespace UserManagement.Application.Tests
                 DateOfBirth = new DateTime(2000, 1, 1),
                 PhoneNumber = "1234567890"
             };
-            _userRepositoryMock.Setup(repo => repo.GetUserById(user.Id)).Returns(user);
+            _userRepositoryMock.Setup(repo => repo.GetUserByIdAsync(user.Id)).ReturnsAsync(user);
 
             // Act
-            var result = _userService.GetUserById(user.Id);
+            var result = await _userService.GetUserByIdAsync(user.Id);
 
             // Assert
             Assert.Equal(user, result);
         }
 
         [Fact]
-        public void AddUser_ValidUser_CallsRepository()
+        public async void AddUser_ValidUser_CallsRepository()
         {
             // Arrange
             var user = new User
@@ -78,14 +79,14 @@ namespace UserManagement.Application.Tests
             };
 
             // Act
-            _userService.AddUser(user);
+            await _userService.AddUserAsync(user);
 
             // Assert
-            _userRepositoryMock.Verify(repo => repo.AddUser(user), Times.Once);
+            _userRepositoryMock.Verify(repo => repo.AddUserAsync(user), Times.Once);
         }
 
         [Fact]
-        public void UpdateUser_ValidUser_CallsRepository()
+        public async void UpdateUser_ValidUser_CallsRepository()
         {
             // Arrange
             var user = new User
@@ -98,26 +99,26 @@ namespace UserManagement.Application.Tests
                 PhoneNumber = "0987654321"
             };
 
-            _userRepositoryMock.Setup(repo => repo.GetUserById(user.Id)).Returns(user);
+            _userRepositoryMock.Setup(repo => repo.GetUserByIdAsync(user.Id)).ReturnsAsync(user);
 
             // Act
-            _userService.UpdateUser(user);
+            await _userService.UpdateUserAsync(user);
 
             // Assert
-            _userRepositoryMock.Verify(repo => repo.UpdateUser(user), Times.Once);
+            _userRepositoryMock.Verify(repo => repo.UpdateUserAsync(user), Times.Once);
         }
 
         [Fact]
-        public void DeleteUser_UserExists_CallsRepository()
+        public async void DeleteUser_UserExists_CallsRepository()
         {
             // Arrange
             var userId = 1;
 
             // Act
-            _userService.DeleteUser(userId);
+            await _userService.DeleteUserAsync(userId);
 
             // Assert
-            _userRepositoryMock.Verify(repo => repo.DeleteUser(userId), Times.Once);
+            _userRepositoryMock.Verify(repo => repo.DeleteUserAsync(userId), Times.Once);
         }
     }
 }

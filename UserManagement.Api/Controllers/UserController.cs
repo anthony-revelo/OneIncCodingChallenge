@@ -21,12 +21,14 @@ namespace UserManagement.Api.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetAllUsers()
+        public async Task<IActionResult> GetAllUsers()
         {
             try
             {
                 _logger.LogInformation("Getting all users");
-                var users = _userService.GetAllUsers().Select(user => new
+                var users = await _userService.GetAllUsersAsync();
+                    
+                var result = users.Select(user => new
                 {
                     user.Id,
                     user.FirstName,
@@ -36,7 +38,7 @@ namespace UserManagement.Api.Controllers
                     Age = CalculateAge(user.DateOfBirth),
                     user.PhoneNumber
                 });
-                return Ok(users);
+                return Ok(result);
             }
             catch (Exception ex)
             {
@@ -46,12 +48,12 @@ namespace UserManagement.Api.Controllers
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetUserById(int id)
+        public async Task<IActionResult> GetUserById(int id)
         {
             try
             {
                 _logger.LogInformation($"Getting user with ID {id}");
-                var user = _userService.GetUserById(id);
+                var user = await _userService.GetUserByIdAsync(id);
                 if (user == null) return NotFound();
                 return Ok(new
                 {
@@ -72,7 +74,7 @@ namespace UserManagement.Api.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddUser([FromBody] User user)
+        public async Task<IActionResult> AddUser([FromBody] User user)
         {
             try
             {
@@ -84,7 +86,7 @@ namespace UserManagement.Api.Controllers
                     return BadRequest(validationResult.Errors);
                 }
 
-                _userService.AddUser(user);
+                await _userService.AddUserAsync(user);
                 return CreatedAtAction(nameof(GetUserById), new { id = user.Id }, user);
             }
             catch (Exception ex)
@@ -95,13 +97,13 @@ namespace UserManagement.Api.Controllers
         }
 
         [HttpPut("{id}")]
-        public IActionResult UpdateUser(int id, [FromBody] User user)
+        public async Task<IActionResult> UpdateUser(int id, [FromBody] User user)
         {
             try
             {
                 _logger.LogInformation($"Updating user with ID {id}");
 
-                if (_userService.GetUserById(id) == null) return NotFound();
+                if (_userService.GetUserByIdAsync(id) == null) return NotFound();
 
                 user.Id = id;
                 var validationResult = _validator.Validate(user);
@@ -110,7 +112,7 @@ namespace UserManagement.Api.Controllers
                     return BadRequest(validationResult.Errors);
                 }
 
-                _userService.UpdateUser(user);
+                await _userService.UpdateUserAsync(user);
                 return NoContent();
             }
             catch (Exception ex)
@@ -121,13 +123,13 @@ namespace UserManagement.Api.Controllers
         }
 
         [HttpDelete("{id}")]
-        public IActionResult DeleteUser(int id)
+        public async Task<IActionResult> DeleteUser(int id)
         {
             try
             {
                 _logger.LogInformation($"Deleting user with ID {id}");
-                if (_userService.GetUserById(id) == null) return NotFound();
-                _userService.DeleteUser(id);
+                if (await _userService.GetUserByIdAsync(id) == null) return NotFound();
+                await _userService.DeleteUserAsync(id);
                 return NoContent();
             }
             catch (Exception ex)
@@ -137,7 +139,7 @@ namespace UserManagement.Api.Controllers
             }
         }
 
-        private int CalculateAge(DateTime dateOfBirth)
+        private static int CalculateAge(DateTime dateOfBirth)
         {
             var today = DateTime.Today;
             var age = today.Year - dateOfBirth.Year;

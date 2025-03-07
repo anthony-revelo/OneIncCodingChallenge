@@ -13,29 +13,29 @@ namespace UserManagement.Application.Services
             _userRepository = userRepository;
         }
 
-        public IEnumerable<User> GetAllUsers()
+        public async Task<IEnumerable<User>> GetAllUsersAsync()
         {
-            return _userRepository.GetAllUsers();
+            return await _userRepository.GetAllUsersAsync();
         }
 
-        public User GetUserById(int id)
+        public async Task<User> GetUserByIdAsync(int id)
         {
-            return _userRepository.GetUserById(id);
+            return await _userRepository.GetUserByIdAsync(id);
         }
 
-        public void AddUser(User user)
+        public async Task AddUserAsync(User user)
         {
-            _userRepository.AddUser(user);
+            await _userRepository.AddUserAsync(user);
         }
 
-        public void UpdateUser(User user)
+        public async Task UpdateUserAsync(User user)
         {
-            _userRepository.UpdateUser(user);
+           await _userRepository.UpdateUserAsync(user);
         }
 
-        public void DeleteUser(int id)
+        public async Task DeleteUserAsync(int id)
         {
-            _userRepository.DeleteUser(id);
+            await _userRepository.DeleteUserAsync(id);
         }
     }
 }

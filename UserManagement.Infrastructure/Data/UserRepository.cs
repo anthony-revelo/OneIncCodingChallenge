@@ -17,7 +17,7 @@ namespace UserManagement.Infrastructure.Data
             _logger = logger;
         }
 
-        public IEnumerable<User> GetAllUsers()
+        public async Task<IEnumerable<User>> GetAllUsersAsync()
         {
             try
             {
@@ -25,11 +25,11 @@ namespace UserManagement.Infrastructure.Data
 
                 using (var connection = _databaseClient.CreateConnection())
                 {
-                    connection.Open();
+                    await connection.OpenAsync();
                     var command = new SqlCommand("SELECT * FROM Users", connection);
-                    using (var reader = command.ExecuteReader())
+                    using (var reader = await command.ExecuteReaderAsync())
                     {
-                        while (reader.Read())
+                        while (await reader.ReadAsync())
                         {
                             users.Add(new User
                             {
@@ -53,7 +53,7 @@ namespace UserManagement.Infrastructure.Data
             }
         }
 
-        public User GetUserById(int id)
+        public async Task<User> GetUserByIdAsync(int id)
         {
             try
             {
@@ -61,13 +61,13 @@ namespace UserManagement.Infrastructure.Data
 
                 using (var connection = _databaseClient.CreateConnection())
                 {
-                    connection.Open();
+                    await connection.OpenAsync();
                     var command = new SqlCommand("SELECT * FROM Users WHERE Id = @Id", connection);
                     command.Parameters.AddWithValue("@Id", id);
 
-                    using (var reader = command.ExecuteReader())
+                    using (var reader = await command.ExecuteReaderAsync())
                     {
-                        if (reader.Read())
+                        if (await reader.ReadAsync())
                         {
                             user = new User
                             {
@@ -91,7 +91,7 @@ namespace UserManagement.Infrastructure.Data
             }
         }
 
-        public void AddUser(User user)
+        public async Task AddUserAsync(User user)
         {
             try
             {
@@ -107,7 +107,7 @@ namespace UserManagement.Infrastructure.Data
                     command.Parameters.AddWithValue("@DateOfBirth", user.DateOfBirth);
                     command.Parameters.AddWithValue("@PhoneNumber", user.PhoneNumber);
 
-                    command.ExecuteNonQuery();
+                    await command.ExecuteNonQueryAsync();
                 }
             }
             catch (Exception ex)
@@ -117,7 +117,7 @@ namespace UserManagement.Infrastructure.Data
             }
         }
 
-        public void UpdateUser(User user)
+        public async Task UpdateUserAsync(User user)
         {
             try
             {
@@ -134,7 +134,7 @@ namespace UserManagement.Infrastructure.Data
                     command.Parameters.AddWithValue("@PhoneNumber", user.PhoneNumber);
                     command.Parameters.AddWithValue("@Id", user.Id);
 
-                    command.ExecuteNonQuery();
+                    await command.ExecuteNonQueryAsync();
                 }
             }
             catch (Exception ex)
@@ -144,7 +144,7 @@ namespace UserManagement.Infrastructure.Data
             }
         }
 
-        public void DeleteUser(int id)
+        public async Task DeleteUserAsync(int id)
         {
             try
             {
@@ -154,7 +154,7 @@ namespace UserManagement.Infrastructure.Data
                     var command = new SqlCommand("DELETE FROM Users WHERE Id = @Id", connection);
                     command.Parameters.AddWithValue("@Id", id);
 
-                    command.ExecuteNonQuery();
+                    await command.ExecuteNonQueryAsync();
                 }
             }
             catch (Exception ex)
