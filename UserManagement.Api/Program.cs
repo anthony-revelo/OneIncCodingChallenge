@@ -1,12 +1,10 @@
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.Extensions.Options;
-using UserManagement.Application.Interfaces;
-using UserManagement.Application.Services;
-using UserManagement.Core.Interfaces;
-using UserManagement.Infrastructure.Data;
 using Microsoft.OpenApi.Models;
 using UserManagement.Infrastructure.Validation;
+using UserManagement.Api.Extensions;
+using Microsoft.Extensions.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,16 +18,21 @@ builder.Services.AddControllers()
                     options.JsonSerializerOptions.PropertyNamingPolicy = null; // Preserve property names as defined
                 });
 
-builder.Services.AddScoped<IDatabaseClient, DatabaseClient>(); // Register the database client
-builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.ConfigureServiceDependencies(); // Register application services
+builder.Services.ConfigureValidators(); // Register validators
+
+// Registering validators for any specific configuration section that needs to be present for the app to start correctly
+builder.Services.AddSingleton<IValidator<MySpecificConfiguration>, MySpecificConfigurationValidator>();
+builder.Services.AddOptions<MySpecificConfiguration>()
+    .Bind(builder.Configuration.GetSection("MySpecificConfiguration"))
+    .ValidateFluently()
+    .ValidateOnStart();
+
 builder.Services.AddLogging(config =>
 {
     config.AddConsole();
     config.AddDebug();
 });
-builder.Services.AddFluentValidationAutoValidation();
-builder.Services.AddValidatorsFromAssemblyContaining<UserValidator>();
 
 // Configure logging
 builder.Logging.ClearProviders();
